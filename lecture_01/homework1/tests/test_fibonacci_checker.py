@@ -1,5 +1,6 @@
-import pytest
+from typing import Sequence
 
+import pytest
 from task02.fibonacci_checker import check_fibonacci
 
 
@@ -41,7 +42,12 @@ from task02.fibonacci_checker import check_fibonacci
         ((90,), False),
     ],
 )
-def test_check_fibonacci(value, expected_result: bool):
-    actual_result = check_fibonacci(value)
+def test_check_fibonacci(value: Sequence[int], expected_result: bool) -> None:
+    """This function tests a function check_fibonacci().
 
+    Args:
+        value: test data located in the first column of decorator arguments.
+        expected_result: located in the second column of decorator arguments.
+    """
+    actual_result = check_fibonacci(value)
     assert actual_result == expected_result

@@ -15,18 +15,24 @@ from typing import Any, Deque, List
 
 def find_maximal_subarray_sum(nums: List[int], k: int) -> int:
     """This function looks for a sub-array with length less then or equal to "k",
-    with maximal sum. It returns the sum of this sub-array.
+    with maximal sum.
+
+    Args:
+        nums: array of numbers.
+        k: sub-array length limit.
+
+    Returns:
+        maximal sum.
     """
     sub_array: Deque = deque((), k)
-    maximum_sum: Any = float("-inf")
+    maximum_sum: int = nums[0]
     sub_array_sum: int = 0
     for number in nums:
         sub_array.append(number)
         sub_array_sum = sum(sub_array)
-        for number2 in iter(tuple(sub_array)[:-1]):
-            part_of_sub_array_sum = sub_array_sum - number2
-            maximum_sum = max(
-                maximum_sum, sub_array_sum, part_of_sub_array_sum, number2
-            )
+        maximum_sum = max(maximum_sum, sub_array_sum)
+        for number_ in iter(tuple(sub_array)[:-1]):
+            part_of_sub_array_sum = sub_array_sum - number_
+            maximum_sum = max(maximum_sum, part_of_sub_array_sum)
             sub_array_sum = part_of_sub_array_sum
     return maximum_sum

@@ -1,7 +1,6 @@
 from typing import List
 
 import pytest
-
 from task05.max_subarray_sum import find_maximal_subarray_sum
 
 
@@ -16,6 +15,12 @@ from task05.max_subarray_sum import find_maximal_subarray_sum
     ],
 )
 def test_find_maximal_subarray_sum(nums: List[int], k: int, expected_result: int):
-    actual_result = find_maximal_subarray_sum(nums, k)
+    """This function tests a function find_maximal_subarray_sum.
 
+    Args:
+        nums: test data located in the first column of decorator arguments.
+        k: test data located in the second column of decorator arguments.
+        expected_result: in the third column of decorator arguments.
+    """
+    actual_result = find_maximal_subarray_sum(nums, k)
     assert actual_result == expected_result
