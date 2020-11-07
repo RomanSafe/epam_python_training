@@ -16,4 +16,5 @@ from tasks.max_subarray_sum import find_maximal_subarray_sum
 )
 def test_find_maximal_subarray_sum(nums: List[int], k: int, expected_result: int):
     actual_result = find_maximal_subarray_sum(nums, k)
+
     assert actual_result == expected_result

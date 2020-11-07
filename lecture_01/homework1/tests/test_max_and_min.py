@@ -14,4 +14,5 @@ from tasks.max_and_min import find_maximum_and_minimum
 )
 def test_find_maximum_and_minimum(value: str, expected_result: Tuple[int, int]) -> None:
     actual_result = find_maximum_and_minimum(value)
+
     assert actual_result == expected_result

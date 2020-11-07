@@ -21,4 +21,5 @@ from tasks.calculator import check_power_of_2
 )
 def test_power_of_2(value: int, expected_result: bool) -> None:
     actual_result = check_power_of_2(value)
+
     assert actual_result == expected_result

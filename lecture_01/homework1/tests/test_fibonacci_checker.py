@@ -44,4 +44,5 @@ from tasks.fibonacci_checker import check_fibonacci
 )
 def test_check_fibonacci(value: Sequence[int], expected_result: bool) -> None:
     actual_result = check_fibonacci(value)
+
     assert actual_result == expected_result
