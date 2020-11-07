@@ -30,7 +30,6 @@ from tasks.fibonacci_checker import check_fibonacci
                 1597,
                 2584,
                 4181,
-                6765,
             ),
             True,
         ),
@@ -42,7 +41,7 @@ from tasks.fibonacci_checker import check_fibonacci
         ((90,), False),
     ],
 )
-def test_check_fibonacci(value: Sequence[int], expected_result: bool) -> None:
+def test_check_fibonacci(value: Sequence[int], expected_result: bool):
     actual_result = check_fibonacci(value)
 
     assert actual_result == expected_result

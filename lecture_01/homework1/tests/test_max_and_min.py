@@ -12,7 +12,7 @@ from tasks.max_and_min import find_maximum_and_minimum
         ("lecture_01/homework1/tests/test_file3.txt", (-999999999, 0)),
     ],
 )
-def test_find_maximum_and_minimum(value: str, expected_result: Tuple[int, int]) -> None:
+def test_find_maximum_and_minimum(value: str, expected_result: Tuple[int, int]):
     actual_result = find_maximum_and_minimum(value)
 
     assert actual_result == expected_result

@@ -13,36 +13,40 @@ with open("some_file.txt") as fi:
         ...
 
 """
-from typing import Any, List, Tuple
+from typing import List, Tuple
 
 
 def find_maximum_and_minimum(file_name: str) -> Tuple[int, int]:
-    """This function reads given file line-by-line, finds maximum and minimum values in the file.
+    """Reads given file line-by-line, finds maximum and minimum values in the file.
 
     Args:
         file_name: path-like file name.
 
     Returns:
         Tuple with maximum and minimum values.
+
     """
     with open(file_name) as file:
-        line_1: str = file.readline()
-        minimum_value: Any = min(convert_str_to_int(line_1))
-        maximum_value: Any = max(convert_str_to_int(line_1))
+        line_1 = file.readline()
+        minimum_value = min(get_numbers_from_line(line_1))
+        maximum_value = max(get_numbers_from_line(line_1))
         for line in file:
-            numbers: Tuple[int, ...] = convert_str_to_int(line)
+            numbers = get_numbers_from_line(line)
             minimum_value = min(minimum_value, *numbers)
             maximum_value = max(maximum_value, *numbers)
     return (minimum_value, maximum_value)
 
 
-def convert_str_to_int(string_: str) -> Tuple[int, ...]:
-    """This function cleans given argument, converts it and returns.
+def get_numbers_from_line(string_: str) -> List[int]:
+    """Takes given argument, split it, remove delimiter characters and returns.
 
     Args:
-        string: digits separated whitespace and or comma, semicolon, colon.
+        string: digits separated whitespace
+        or whitespace with either comma or semicolon.
+        For example "7, 4, 5" or "1 2 3" or "8; 9; 10; 1".
 
     Returns:
-        Tuple of integers.
+        List of integers.
+
     """
-    return tuple((int(item.strip(",;:")) for item in string_.split()))
+    return [int(item.strip(",;")) for item in string_.split()]

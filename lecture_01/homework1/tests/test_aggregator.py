@@ -36,7 +36,9 @@ from tasks.aggregator import check_sum_of_four
         ),
     ],
 )
-def test_check_sum_of_four(value: Tuple[List[int], ...], expected_result: int):
+def test_check_sum_of_four(
+    value: Tuple[List[int], List[int], List[int], List[int]], expected_result: int
+):
     actual_result = check_sum_of_four(*value)
 
     assert actual_result == expected_result
