@@ -1,6 +1,7 @@
-import pytest
+from typing import Sequence
 
-from task02.fibonacci_checker import check_fibonacci
+import pytest
+from tasks.fibonacci_checker import check_fibonacci
 
 
 @pytest.mark.parametrize(
@@ -29,7 +30,6 @@ from task02.fibonacci_checker import check_fibonacci
                 1597,
                 2584,
                 4181,
-                6765,
             ),
             True,
         ),
@@ -41,7 +41,7 @@ from task02.fibonacci_checker import check_fibonacci
         ((90,), False),
     ],
 )
-def test_check_fibonacci(value, expected_result: bool):
+def test_check_fibonacci(value: Sequence[int], expected_result: bool):
     actual_result = check_fibonacci(value)
 
     assert actual_result == expected_result
