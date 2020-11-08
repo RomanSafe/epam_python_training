@@ -8,7 +8,7 @@ The written function should return the sum of this sub-array.
 Examples:
     nums = [1, 3, -1, -3, 5, 3, 6, 7], k = 3
     result = 16
-    
+
 """
 from collections import deque
 from typing import Deque, List

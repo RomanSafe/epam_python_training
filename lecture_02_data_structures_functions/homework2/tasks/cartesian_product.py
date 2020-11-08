@@ -13,6 +13,7 @@ assert combinations([1, 2], [3, 4]) == [
     [2, 3],
     [2, 4],
 ]
+
 """
 from itertools import product
 from typing import Any, List
@@ -20,7 +21,7 @@ from typing import Any, List
 
 def get_combinations(*args: List[Any]) -> List[List]:
     """Takes K lists as arguments and returns Cartesian product of them.
-    
+
     Cartesian product means all possible lists of K items where the first
     element is from the first list, the second is from the second and so one.
 

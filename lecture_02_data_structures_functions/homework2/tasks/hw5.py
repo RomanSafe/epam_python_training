@@ -29,9 +29,9 @@ def get_custom_range(entry_iterable: Iterable[Any], stop=None, start=None, step=
     """
     result = []
     if stop is None:
-        stop = 
+        stop =
     if start is None:
-        start = 
+        start =
     for item in entry_iterable:
         if item == stop:
             return result

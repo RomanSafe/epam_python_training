@@ -17,8 +17,19 @@ Input: [2,2,1,1,1,2,2]
 Output: 2, 1
 
 """
+from collections import Counter
 from typing import List, Tuple
 
 
-def major_and_minor_elem(inp: List) -> Tuple[int, int]:
-    ...
+def get_major_and_minor_elem(array_: List) -> Tuple[int, int]:
+    """get_major_and_minor_elem.
+
+    Args:
+        array_: [description]
+
+    Returns:
+        Tuple[int, int]
+
+    """
+    boarder = len(array_) // 2
+    counter = Counter(array_).most_common()
