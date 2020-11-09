@@ -2,8 +2,7 @@ from typing import List, Tuple
 
 import pytest
 
-from lecture_02_data_structures_functions.homework2.tasks.cartesian_product import \
-    get_combinations
+from lecture_02.homework2.tasks.cartesian_product import get_combinations
 
 
 @pytest.mark.parametrize(

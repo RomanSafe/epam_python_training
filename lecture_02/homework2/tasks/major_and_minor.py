@@ -22,14 +22,18 @@ from typing import List, Tuple
 
 
 def get_major_and_minor_elem(array_: List) -> Tuple[int, int]:
-    """get_major_and_minor_elem.
+    """Returns the most common and the least common elements from a given list.
 
     Args:
-        array_: [description]
+        array_: should be non-empty and the most common element always exist in the
+        array. The most common element appears more than n // 2 times. The least
+        common element appears fewer than other.
 
     Returns:
-        Tuple[int, int]
+        Tuple with the most common and the least common elements.
 
     """
-    boarder = len(array_) // 2
     counter = Counter(array_).most_common()
+    major_element = counter[0][0]
+    minor_element = counter[-1][0]
+    return (major_element, minor_element)
