@@ -8,7 +8,7 @@ The written function should return the sum of this sub-array.
 Examples:
     nums = [1, 3, -1, -3, 5, 3, 6, 7], k = 3
     result = 16
-    
+
 """
 from collections import deque
 from typing import Deque, List
@@ -33,7 +33,7 @@ def find_maximal_subarray_sum(nums: List[int], k: int) -> int:
         sub_array.append(number)
         sub_array_sum = sum(sub_array)
         maximum_sum = max(maximum_sum, sub_array_sum)
-        for number_ in iter(tuple(sub_array)[:-1]):
+        for number_ in tuple(sub_array)[:-1]:
             part_of_sub_array_sum = sub_array_sum - number_
             maximum_sum = max(maximum_sum, part_of_sub_array_sum)
             sub_array_sum = part_of_sub_array_sum
