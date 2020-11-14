@@ -32,7 +32,7 @@ from lecture_02.homework2.tasks.cartesian_product import get_combinations
         ),
     ],
 )
-def test_get_combinations(value: Tuple[List], expected_result: bool):
+def test_get_combinations(value: Tuple[List], expected_result: List[List]):
     actual_result = get_combinations(*value)
 
     assert actual_result == expected_result

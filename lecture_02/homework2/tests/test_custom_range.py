@@ -18,3 +18,24 @@ def test_get_custom_range(value: Tuple[Sequence[Any]], expected_result: List[Any
     actual_result = get_custom_range(*value)
 
     assert actual_result == expected_result
+
+
+@pytest.mark.parametrize(
+    ["value", "expected_exception", "expected_message"],
+    [
+        (
+            (ascii_lowercase, "p", "g", -2, 7),
+            Exception,
+            "Amonunt of range parameters is exceeded. Maximum is 3.",
+        ),
+    ],
+)
+def test_get_custom_range_v2(
+    value: Tuple[Sequence[Any]], expected_exception: Exception, expected_message: str
+):
+    """Test for exception."""
+    with pytest.raises(Exception) as exc_info:
+        get_custom_range(*value)
+
+    assert exc_info.type is expected_exception
+    assert exc_info.value.args[0] == expected_message

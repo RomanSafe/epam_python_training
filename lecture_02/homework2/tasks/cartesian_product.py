@@ -15,7 +15,6 @@ assert combinations([1, 2], [3, 4]) == [
 ]
 
 """
-from itertools import product
 from typing import Any, List
 
 
@@ -29,7 +28,7 @@ def get_combinations(*args: List[Any]) -> List[List]:
         All possible combinations of items from function's arguments.
 
     """
-    result = []
-    for item in product(*args):
-        result.append(list(item))
+    result: List[List] = [[]]
+    for list_n in args:
+        result = [old_item + [new_item] for old_item in result for new_item in list_n]
     return result

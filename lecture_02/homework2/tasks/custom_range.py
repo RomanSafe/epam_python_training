@@ -38,9 +38,6 @@ def get_custom_range(entry_iterable: Sequence[Any], *args: Any) -> List[Any]:
 
     """
     result: List[Any] = []  # mypy demanded this annotation.
-    if args[0] not in entry_iterable:
-        return result
-
     arguments_amount = len(args)
     if arguments_amount == 1:
         stop = args[0]
@@ -51,10 +48,10 @@ def get_custom_range(entry_iterable: Sequence[Any], *args: Any) -> List[Any]:
         step = 1
         if start not in entry_iterable or stop not in entry_iterable:
             return result
-    else:
+    elif arguments_amount == 3:
         start, stop, step = args
-    start_index = entry_iterable.index(start)
-    stop_index = entry_iterable.index(stop)
-    for item in entry_iterable[start_index:stop_index:step]:
-        result.append(item)
-    return result
+    else:
+        raise Exception("Amonunt of range parameters is exceeded. Maximum is 3.")
+    return list(
+        entry_iterable[entry_iterable.index(start) : entry_iterable.index(stop) : step]
+    )

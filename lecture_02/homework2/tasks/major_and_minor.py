@@ -17,7 +17,6 @@ Input: [2,2,1,1,1,2,2]
 Output: 2, 1
 
 """
-from collections import Counter
 from typing import List, Tuple
 
 
@@ -33,7 +32,11 @@ def get_major_and_minor_elem(array_: List) -> Tuple[int, int]:
         Tuple with the most common and the least common elements.
 
     """
-    counter = Counter(array_).most_common()
-    major_element = counter[0][0]
-    minor_element = counter[-1][0]
-    return (major_element, minor_element)
+    counter: dict = {}
+    for item in array_:
+        if item in counter:
+            counter[item] += 1
+        else:
+            counter[item] = 1
+    items_list = sorted(counter, key=lambda key_: counter[key_])
+    return items_list[-1], items_list[0]

@@ -35,12 +35,12 @@ def cache(func: Callable) -> Callable:
         Function with cach functionality.
 
     """
-    cache: dict = dict()
+    cache: dict = {}  # mypy demanded the type hint.
 
-    def memoized_func(*args):
+    def memoized_func(*args, **kwargs):
         if args in cache:
             return cache[args]
-        result = func(*args)
+        result = func(*args, **kwargs)
         cache[args] = result
         return result
 
