@@ -20,16 +20,19 @@ def test_filter_apply(functions, test_data):
 
 
 @pytest.mark.parametrize(
-    ["specified_keywords", "test_data", "expected_result"],
+    ["specified_keywords", "expected_result"],
     [
         (
             {"name": "polly", "type": "bird"},
-            sample_data,
             [{"is_dead": True, "kind": "parrot", "type": "bird", "name": "polly"}],
+        ),
+        (
+            {"invalid": True, "type": "bird"},
+            [],
         ),
     ],
 )
-def test_make_filter(specified_keywords, test_data, expected_result):
-    result = make_filter(name="polly", type="bird").apply(sample_data)
+def test_make_filter(specified_keywords, expected_result):
+    result = make_filter(**specified_keywords).apply(sample_data)
 
     assert result == expected_result

@@ -47,8 +47,11 @@ def make_filter(**keywords: Hashable) -> Filter:
     filter_funcs = []
     for key, value in keywords.items():
 
-        def keyword_filter_func(dictionary):
-            return dictionary[key] == value
+        def keyword_filter_func(dictionary, key=key, value=value):
+            result = True
+            if key not in dictionary or dictionary[key] != value:
+                result = False
+            return result
 
         filter_funcs.append(keyword_filter_func)
     return Filter(filter_funcs)
