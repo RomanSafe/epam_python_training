@@ -26,9 +26,8 @@ You will learn:
 * https://docs.python.org/3/library/urllib.request.html#urllib.request.urlopen
 
 """
-import urllib.request
-from http.client import HTTPException
-from urllib.error import URLError
+import requests
+from requests.exceptions import ConnectTimeout, HTTPError, RequestException, URLRequired
 
 
 def count_dots_on_i(url: str) -> int:
@@ -47,14 +46,17 @@ def count_dots_on_i(url: str) -> int:
     """
     result = 0
     try:
-        with urllib.request.urlopen(url) as response:
-            for byte_line in response:
-                str_line = byte_line.decode("utf-8")
-                for symbol in str_line:
-                    if symbol == "i":
-                        result += 1
-    except (ConnectionError, ValueError, HTTPException, URLError):
-        raise ValueError(f"Unreachable {url}") from None
+        response = requests.get(url)
+        result = response.text.count("i")
+    except (
+        ConnectionError,
+        ConnectTimeout,
+        HTTPError,
+        URLRequired,
+        RequestException,
+        ValueError,
+    ):
+        raise ValueError(f"Unreachable {url}")
 
     return result
 

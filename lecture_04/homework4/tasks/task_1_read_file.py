@@ -43,8 +43,6 @@ def read_magic_number(path: str) -> bool:
     try:
         with open(path) as file:
             line = file.readline().strip()
-            if line.isnumeric() and 1 <= float(line) < 3:
-                return True
-            return False
+            return line.isdigit() and 1 <= float(line) < 3
     except Exception:
         raise ValueError("Some error has happened.") from None

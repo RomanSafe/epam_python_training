@@ -22,7 +22,7 @@ You will learn:
  - how to test output to the stderr and stdout
 
 """
-from sys import stderr, stdout
+import sys
 
 
 def my_precious_logger(text: str) -> None:
@@ -33,9 +33,7 @@ def my_precious_logger(text: str) -> None:
         text: for writing to stderr or stdout.
 
     """
-    if not text.endswith("\n"):
-        text = text + "\n"
     if text.startswith("error"):
-        stderr.write(text)
+        print(text, file=sys.stderr)
     else:
-        stdout.write(text)
+        print(text)
