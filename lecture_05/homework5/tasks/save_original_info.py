@@ -16,20 +16,55 @@ print(custom_sum.__name__)  # 'custom_sum'
 print(custom_sum.__original_func)  # <function custom_sum at <some_id>>
 
 """
-
 import functools
+from collections.abc import Callable
+
+
+def save_func_and_its_meta(func: Callable) -> Callable:
+    """Decorator for a wrapper function.
+
+    Updates a wrapper function to look like the wrapped function (func).
+
+    To use:
+        add decorator @save_func_and_its_meta(func) before the wrapper
+        function declatation.
+
+    Args:
+        func: original function that we want to save.
+
+    Returns:
+        inner function that saves __name__ and __doc__ attributes of recieved func's
+        and func itself.
+
+    """
+
+    def inner(wrapper: Callable) -> Callable:
+        """Saves attributes __name__ and __doc__ of recieved func, saves this func in the
+        attribute __original_func of the wrapper function.
+
+        Args:
+            wrapper: the decorated wrapper function.
+
+        Returns:
+            wrapper function with changed attributes.
+
+        """
+        wrapper.__doc__ = func.__doc__
+        wrapper.__name__ = func.__name__
+        wrapper.__original_func = func  # type: ignore
+        return wrapper
+
+    return inner
 
 
 def print_result(func):
+    @save_func_and_its_meta(func)
     def wrapper(*args, **kwargs):
         """Function-wrapper which print result of an original function"""
         result = func(*args, **kwargs)
         print(result)
         return result
 
-    wrapper.__doc__ = func.__doc__
-    wrapper.__name__ = func.__name__
-    wrapper.__original_func = func
     return wrapper
 
 

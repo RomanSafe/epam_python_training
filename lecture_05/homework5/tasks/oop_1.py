@@ -45,30 +45,26 @@ Timedelta = NewType("Timedelta", datetime.timedelta)
 
 
 class Homework:
-    """An instance contains:
+    """Describes an instance of homework.
 
-    atributes:
-        text, deadline, created (the date and time of creation);
+    Atributes:
+        text: text of the current homework;
 
-    method:
-        is_active.
+        deadline: a datetime.timedelta object with quantity days till deadline for the
+        current homework;
+
+        created: the date and time of the instance's creation.
 
     """
 
     def __init__(self, text: str, deadline: int) -> None:
-        """Create a class instance.
-
-        Args:
-            text: of homework.
-            deadline: in days.
-
-        """
+        """Creates a class instance."""
         self.text = text
         self.deadline = datetime.timedelta(days=deadline)
         self.created = datetime.datetime.now()
 
     def is_active(self) -> bool:
-        """Check is there time till deadline.
+        """Checks is there time till deadline of the current homework.
 
         Returns:
             If the deadline has not expired return True, overwise False.
@@ -78,34 +74,28 @@ class Homework:
 
 
 class Student:
-    """An instance contains:
+    """Describes an instance of a student.
 
-    atributes:
-        first_name, last_name;
-
-    method:
-        do_homework.
+    Atributes:
+        first_name: the name of a student;
+        last_name: the sername of a student.
 
     """
 
     def __init__(self, first_name: str, last_name: str) -> None:
-        """Create a class instance.
-
-        Args:
-            first_name and last_name of a student.
-
-        """
+        """Creates a class instance."""
         self.first_name = first_name
         self.last_name = last_name
 
     def do_homework(self, homework: Homework) -> Union[Homework, None]:
-        """Call the method is_active() of Homework class instance.
+        """Checks is the deadline of the given homework expired or not.
 
         Args:
-            homework: Homework class instance.
+            homework: an instance of the Homework class that a student is going to do.
 
         Returns:
-            True if homework's deadline hasn't expired, overwise False.
+            the recieved instance of the Homework class if it's deadline hasn't
+            expired, overwise prints "You are late" and returns None.
 
         """
         if homework.is_active():
@@ -115,33 +105,26 @@ class Student:
 
 
 class Teacher:
-    """An instance contains:
+    """Describes an instance of a teacher.
 
     atributes:
-        first_name, last_name;
-
-    staticmethod:
-        create_homework.
+        first_name: the name of a teacher;
+        last_name: the sername of a teacher.
 
     """
 
     def __init__(self, first_name: str, last_name: str) -> None:
-        """Create a class instance.
-
-        Args:
-            first_name and last_name of a teacher.
-
-        """
+        """Create a class instance."""
         self.first_name = first_name
         self.last_name = last_name
 
     @staticmethod
     def create_homework(text: str, deadline: int) -> Homework:
-        """Create an instance of Homework class.
+        """Creates an instance of the Homework class.
 
         Args:
-            text: of homework.
-            deadline: in days.
+            text: text of created homework.
+            deadline: a term to complete the homework in days.
 
         Returns:
             an instance of Homework class.
