@@ -72,7 +72,7 @@ def test_student_do_homework_positive():
 def test_teacher_check_homework_return_true():
     teacher = Teacher("Daniil", "Shadrin")
     student = Student("Lev", "Sokolov")
-    homework = Homework("Read OOP.", 2)
+    homework = Homework("Read OOP principles.", 2)
     done_homework = HomeworkResult(student, homework, "Pretty long solution.")
 
     assert teacher.check_homework(done_homework) is True
@@ -90,13 +90,18 @@ def test_teacher_check_homework_return_false():
 def test_teacher_homework_done():
     teacher_1 = Teacher("Daniil", "Shadrin")
     teacher_2 = Teacher("Aleksandr", "Smetanin")
-    student = Student("Lev", "Sokolov")
+    student_1 = Student("Lev", "Sokolov")
+    student_2 = Student("Ivan", "Petrov")
     homework = Homework("Read OOP.", 2)
-    done_homework = HomeworkResult(student, homework, "I've read it twice.")
+    done_homework = HomeworkResult(student_1, homework, "I've read it twice.")
+    copied_homework = HomeworkResult(student_2, homework, "I've read it twice.")
     teacher_1.check_homework(done_homework)
-    teacher_2.check_homework(done_homework)
+    teacher_2.check_homework(copied_homework)
 
     assert teacher_1.homework_done == teacher_2.homework_done
+    assert done_homework in teacher_1.homework_done[homework]
+    teacher_1.homework_done[homework].discard(done_homework)
+    assert len(teacher_1.homework_done[homework]) == 0
 
 
 def test_teacher_reset_results():
@@ -109,10 +114,10 @@ def test_teacher_reset_results():
     done_homework_2 = HomeworkResult(student, homework_2, "I've learned it.")
     teacher.check_homework(done_homework_2)
 
-    assert "I've read it twice." in teacher.homework_done[homework_1]
+    assert done_homework_1 in teacher.homework_done[homework_1]
     teacher.reset_results(homework_1)
-    assert "I've read it twice." not in teacher.homework_done[homework_1]
+    assert done_homework_1 not in teacher.homework_done[homework_1]
 
-    assert "I've learned it." in teacher.homework_done[homework_2]
+    assert done_homework_2 in teacher.homework_done[homework_2]
     teacher.reset_results()
     assert len(teacher.homework_done) == 0

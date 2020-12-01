@@ -29,18 +29,18 @@ HomeworkResult принимает объект автора задания, пр
 4.
 Teacher
 Атрибут:
-    homework_done - структура с интерфейсом как в словаря, сюда поподают все
+    homework_done - структура с интерфейсом как в словаря, сюда попадают все
     HomeworkResult после успешного прохождения check_homework
-    (нужно гаранитровать остутствие повторяющихся результатов по каждому
+    (нужно гарантировать отсутствие повторяющихся результатов по каждому
     заданию), группировать по экземплярам Homework.
-    Общий для всех учителей. Вариант ипользования смотри в блоке if __main__...
+    Общий для всех учителей. Вариант использования смотри в блоке if __main__...
 Методы:
     check_homework - принимает экземпляр HomeworkResult и возвращает True если
     ответ студента больше 5 символов, так же при успешной проверке добавить в
     homework_done.
     Если меньше 5 символов - никуда не добавлять и вернуть False.
 
-    reset_results - если передать экземпряр Homework - удаляет только
+    reset_results - если передать экземпляр Homework - удаляет только
     результаты этого задания из homework_done, если ничего не передавать,
     то полностью обнулит homework_done.
 
@@ -48,10 +48,13 @@ PEP8 соблюдать строго.
 Всем перечисленным выше атрибутам и методам классов сохранить названия.
 К названием остальных переменных, классов и тд. подходить ответственно -
 давать логичные подходящие имена.
+
 """
+from __future__ import annotations
+
 import datetime
 from collections import defaultdict
-from typing import NewType, Union
+from typing import NewType
 
 # for static typing
 Timedelta = NewType("Timedelta", datetime.timedelta)
@@ -60,21 +63,17 @@ Timedelta = NewType("Timedelta", datetime.timedelta)
 class Error(Exception):
     """Base class for exceptions in this module."""
 
-    pass
-
 
 class HomeworkError(Error):
     """Raised when the class HomeworkResult hadn't received the Homework class as the
     homework argument.
 
-    Derives from:
-        Error: base class for exceptions in this module.
-
-    Instance attribute:
+    Attribute:
         message: explanation of the exception. Defaults to None.
+
     """
 
-    def __init__(self, message=None):
+    def __init__(self, message=None) -> None:
         """Initialises a class instance."""
 
         self.message = message
@@ -83,14 +82,12 @@ class HomeworkError(Error):
 class DeadlineError(Error):
     """Raised when homework.is_active() returns False.
 
-    Derives from:
-        Error: base class for exceptions in this module.
-
-    Instance attribute:
+    Attribute:
         message: explanation of the exception. Defaults to None.
+
     """
 
-    def __init__(self, message=None):
+    def __init__(self, message=None) -> None:
         """Initialises a class instance."""
 
         self.message = message
@@ -99,13 +96,14 @@ class DeadlineError(Error):
 class Homework:
     """Describes an instance of homework.
 
-    Instance atributes:
+    Attributes:
         text: text of the current homework;
 
         deadline: a datetime.timedelta object with quantity days till deadline for the
         current homework;
 
         created: the date and time of the instance's creation.
+
     """
 
     def __init__(self, text: str, deadline: int) -> None:
@@ -118,18 +116,53 @@ class Homework:
         """Checks is there time till deadline of the current homework.
 
         Returns:
-            If the deadline has not expired return True, overwise False.
+            If the deadline has not expired return True, otherwise False.
+
         """
 
         return datetime.datetime.now() - self.created < self.deadline
+
+    def __hash__(self) -> int:
+        """Called by built-in function hash() and is used for operations on members of
+        hashed collections including set, frozenset, and dict.
+
+        Returns:
+            the hash value of the text and deadline attributes'.
+
+        """
+
+        return hash((self.text, self.deadline))
+
+    def _is_valid_operand(self, other: Homework) -> bool:
+        """Validates the operand for equally check."""
+        return hasattr(other, "text") and hasattr(other, "deadline")
+
+    def __eq__(self, other: Homework) -> bool:  # type: ignore[override]
+        """Defines the behaviour when equal comparison operator is called.
+
+        Args:
+            other: the second operand for comparison.
+
+        Returns:
+            True is compared attributes are equal, otherwise False.
+
+        """
+
+        if not self._is_valid_operand(other):
+            return NotImplemented
+        return (self.text.lower(), self.deadline) == (
+            other.text.lower(),
+            other.deadline,
+        )
 
 
 class Person:
     """Describes an instance of a person. Base class for Student and Teacher classes.
 
-    Atributes:
+    Attributes:
         first_name: the name of a person;
-        last_name: the sername of a person.
+        last_name: the surname of a person.
+
     """
 
     def __init__(self, first_name: str, last_name: str) -> None:
@@ -141,37 +174,41 @@ class Person:
 class Student(Person):
     """Describes an instance of a student.
 
-    Derives from:
-        Person: base class for human classes.
-
-    Instance atributes:
+    Attributes:
         first_name: the name of a student;
-        last_name: the sername of a student.
+        last_name: the surname of a student.
+
+    Raises:
+        DeadlineError: if deadline of the homework has expired.
+
     """
 
-    def do_homework(
-        self, homework: Homework, solution: str
-    ) -> Union["HomeworkResult", None]:
+    def do_homework(self, homework: Homework, solution: str) -> HomeworkResult:
         """Checks is the deadline of the given homework expired or not.
 
         Args:
-            homework: an instance of the Homework class that a student is going to do.
+            homework: an instance of the Homework class that a student is going to do;
+
+            solution: a string representing a solution of the given homework.
 
         Returns:
-            the recieved instance of the Homework class if it's deadline hasn't
-            expired, overwise prints "You are late" and returns None.
+            an instance of the HomeworkResult class if it's deadline hasn't
+            expired.
+
+        Raises:
+            DeadlineError if deadline of the homework has expired.
+
         """
 
         if homework.is_active():
             return HomeworkResult(self, homework, solution)
         raise DeadlineError("You are late")
-        return None
 
 
 class HomeworkResult:
     """Describes result of a homework.
 
-    Instance atributes:
+    Attributes:
         author: an instance of the Student class;
 
         homework: an instance of the Homework class;
@@ -180,36 +217,71 @@ class HomeworkResult:
         solution should consist of 6 symbols at least;
 
         created: the date and time of the instance's creation.
+
     """
 
-    def __init__(self, author: Student, homework: Homework, solution: str):
+    def __init__(self, author: Student, homework: Homework, solution: str) -> None:
         """Initialises a class instance.
 
         Raises:
-            HomeworkError: if given not a Homework object as the homework argument.
+            HomeworkError: if given homework argument not a Homework object.
+
         """
 
-        if isinstance(homework, Homework):
-            self.homework = homework
-        else:
+        if not isinstance(homework, Homework):
             raise HomeworkError("You gave a not Homework object")
+        self.homework = homework
         self.solution = solution
         self.author = author
         self.created = datetime.datetime.now()
+
+    def __hash__(self) -> int:
+        """Called by built-in function hash() and is used for operations on members of
+        hashed collections including set, frozenset, and dict.
+
+        Returns:
+            the hash value of the solution attribute's.
+
+        """
+
+        return hash(self.solution)
+
+    def _is_valid_operand(self, other: HomeworkResult) -> bool:
+        """Validates the operand for equally check."""
+        return hasattr(other, "solution") and hasattr(other, "homework")
+
+    def __eq__(self, other: HomeworkResult) -> bool:  # type: ignore[override]
+        """Defines the behaviour when equal comparison operator is called.
+
+        Args:
+            other: the second operand for comparison.
+
+        Returns:
+            True is compared attributes are equal, otherwise False.
+
+        """
+
+        if not self._is_valid_operand(other):
+            return NotImplemented
+        return (self.solution.lower(), self.homework) == (
+            other.solution.lower(),
+            other.homework,
+        )
 
 
 class Teacher(Person):
     """Describes an instance of a teacher.
 
-    Class atribute:
+    Class attribute:
         homework_done: a data structure with dictionary interface. All HomeworkResult
-        objects are saved here after sucsessfull applying of check_homework method's.
+        objects are saved here after successful applying of check_homework method's.
         Homework objects are keys and HomeworkResult objects are values. It's
         guaranteed that for every homework there are only unique results.
 
-    Instance atributes:
+    Attributes:
         first_name: the name of a teacher;
-        last_name: the sername of a teacher.
+        last_name: the surname of a teacher.
+
     """
 
     homework_done = defaultdict(set)  # type: ignore
@@ -224,6 +296,7 @@ class Teacher(Person):
 
         Returns:
             an instance of Homework class.
+
         """
 
         return Homework(text, deadline)
@@ -237,13 +310,12 @@ class Teacher(Person):
 
         Returns:
             True if the solution of the given homework result more then 5 symbols.
-            Overwise, False.
+            Otherwise, False.
+
         """
 
         if len(homework_result.solution) > 5:
-            Teacher.homework_done[homework_result.homework].add(
-                homework_result.solution
-            )
+            Teacher.homework_done[homework_result.homework].add(homework_result)
             return True
         return False
 
@@ -254,10 +326,11 @@ class Teacher(Person):
         cleans whole homework_done dictionary.
 
         Args:
-            homework: an istance of the Homework class. Defaults to None.
+            homework: an instance of the Homework class. Defaults to None.
+
         """
 
-        if homework is None:
-            Teacher.homework_done.clear()
+        if homework:
+            Teacher.homework_done.pop(homework, None)
         else:
-            del Teacher.homework_done[homework]
+            Teacher.homework_done.clear()
