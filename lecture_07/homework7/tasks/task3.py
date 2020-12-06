@@ -47,17 +47,18 @@ def tic_tac_toe_checker(board: List[List]) -> str:
         nonlocal results
         tokens_count = Counter(tokens_sequence)
         # If there are tokens of both players in current tokens_sequence,
-        # nobody win.
+        # nobody win. We don't keep information about draw, because
+        # it is logically the last in the sequence of return statements.
         if "x" in tokens_count and "o" in tokens_count:
-            results.add("draw!")
+            pass
         # tokens_sequence ful of one player's tokens means he's won.
         elif tokens_count.get("x", None) == board_size:
-            results.add("x wins!")
+            results.add("x")
         elif tokens_count.get("o", None) == board_size:
-            results.add("o wins!")
+            results.add("o")
         # In other cases tokens_sequence is unfinished.
         else:
-            results.add("unfinished!")
+            results.add("u")
 
     diagonal_dec = []
     diagonal_inc = []
@@ -72,11 +73,11 @@ def tic_tac_toe_checker(board: List[List]) -> str:
     _check_state(diagonal_dec)
     _check_state(diagonal_inc)
 
-    if "x wins!" in results:
+    if "x" in results:
         return "x wins!"
-    elif "o wins!" in results:
+    elif "o" in results:
         return "o wins!"
-    elif "unfinished!" in results:
+    elif "u" in results:
         return "unfinished!"
     else:
         return "draw!"
