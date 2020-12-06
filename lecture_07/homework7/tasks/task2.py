@@ -32,14 +32,40 @@ def backspace_compare(first: str, second: str) -> bool:
 
     """
 
-    def _edit_string(text: str):
-        # Does backspace operations on the given text
-        edited_text: list = []
-        for letter in text:
-            if edited_text and letter == "#":
-                edited_text.pop()
-            else:
-                edited_text.append(letter)
-        return edited_text
+    first_index = len(first) - 1
+    second_index = len(second) - 1
+    skip_in_first = 0
+    skip_in_second = 0
+    while first_index >= 0 or second_index >= 0:
+        # In the next two blocks we correct words, if there are "#" or what to skip.
+        if first[first_index] == "#":
+            skip_in_first += 1
+            first_index -= 1
+            continue
+        elif skip_in_first > 0:
+            first_index -= 1
+            skip_in_first -= 1
+            continue
 
-    return _edit_string(first) == _edit_string(second)
+        if second[second_index] == "#":
+            skip_in_second += 1
+            second_index -= 1
+            continue
+        elif skip_in_second > 0:
+            second_index -= 1
+            skip_in_second -= 1
+            continue
+        # Here we check if there are letters in one string and another one is empty.
+        if (
+            first_index >= 0
+            and second_index < 0
+            or first_index < 0
+            and second_index >= 0
+        ):
+            return False
+
+        if first[first_index] != second[second_index]:
+            return False
+        first_index -= 1
+        second_index -= 1
+    return True

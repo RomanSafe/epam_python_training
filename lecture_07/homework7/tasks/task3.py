@@ -20,7 +20,8 @@ Example:
 
 """
 from collections import Counter
-from typing import List, Optional
+from collections.abc import Sequence
+from typing import List
 
 
 def tic_tac_toe_checker(board: List[List]) -> str:
@@ -41,32 +42,41 @@ def tic_tac_toe_checker(board: List[List]) -> str:
     board_size = len(board)
     results = set()
 
-    def _check_state(tokens_sequence: list) -> Optional[str]:
-        # Checks a state of the given tokens_sequence.
+    def _check_state(tokens_sequence: Sequence) -> None:
+        # Checks a state of the given row, column or diagonal (tokens_sequence).
         nonlocal results
-        state_checker = Counter(tokens_sequence)
-        if "x" in state_checker and "o" in state_checker:
+        tokens_count = Counter(tokens_sequence)
+        # If there are tokens of both players in current tokens_sequence,
+        # nobody win.
+        if "x" in tokens_count and "o" in tokens_count:
             results.add("draw!")
-            return None
-        elif "x" in state_checker and state_checker["x"] == board_size:
-            return "x wins!"
-        elif "o" in state_checker and state_checker["o"] == board_size:
-            return "o wins!"
+        # tokens_sequence ful of one player's tokens means he's won.
+        elif tokens_count.get("x", None) == board_size:
+            results.add("x wins!")
+        elif tokens_count.get("o", None) == board_size:
+            results.add("o wins!")
+        # In other cases tokens_sequence is unfinished.
         else:
             results.add("unfinished!")
-            return None
 
     diagonal_dec = []
     diagonal_inc = []
     for index, row in enumerate(board):
+        _check_state(row)
+        # Checks column. The number of column match to index.
+        _check_state(next(zip(*board)))
+        # Collects decreasing and increasing diagonals.
         diagonal_dec.append(row[index])
-        # backward index count to collect increasing diagonal
         diagonal_inc.append(row[-(index + 1)])
-        winner = _check_state(row)
-        if winner:
-            return winner
-    for column in zip(*board):
-        winner = _check_state(column)
-        if winner:
-            return winner
-    return "unfinished!" if "unfinished!" in results else "draw!"
+
+    _check_state(diagonal_dec)
+    _check_state(diagonal_inc)
+
+    if "x wins!" in results:
+        return "x wins!"
+    elif "o wins!" in results:
+        return "o wins!"
+    elif "unfinished!" in results:
+        return "unfinished!"
+    else:
+        return "draw!"

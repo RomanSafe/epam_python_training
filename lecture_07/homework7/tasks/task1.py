@@ -42,31 +42,13 @@ def find_occurrences(tree: dict, element: Any) -> int:
 
     """
 
-    element_occurrences = 0
-    element_type = type(element)
-
-    def _get_collection_items(collection):
-        # Receives list or tuple or set and creates a generator from its items.
-        for item in collection:
-            yield item
-
-    def _get_dictionary_items(dictionary):
-        # Creates a generator of dictionary keys and values.
-        for key_value in tree.items():
-            for item in key_value:
-                yield item
-
     if isinstance(tree, dict):
-        iterate_through = _get_dictionary_items
-    else:
-        iterate_through = _get_collection_items
-    for item in iterate_through(tree):
-        if isinstance(item, element_type) and item == element:
-            element_occurrences += 1
-        elif isinstance(item, (list, tuple, set, dict)):
-            element_occurrences += find_occurrences(item, element)  # type: ignore
-
-    return element_occurrences
+        tree = tree.values()  # type: ignore
+    elif isinstance(tree, (str, bool, int)):
+        return 0
+    return sum(
+        1 if item == element else find_occurrences(item, element) for item in tree
+    )
 
 
 if __name__ == "__main__":

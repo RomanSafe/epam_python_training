@@ -1,3 +1,5 @@
+import pytest
+
 from lecture_07.homework7.tasks.task3 import tic_tac_toe_checker
 
 
@@ -30,7 +32,12 @@ def test_tic_tac_toe_checker_draw():
     assert tic_tac_toe_checker(board) == "draw!"
 
 
-def test_tic_tac_toe_checker_unfinished():
-    board = [["-", "-", "o"], ["-", "x", "o"], ["x", "o", "x"]]
-
+@pytest.mark.parametrize(
+    "board",
+    [
+        [["-", "-", "o"], ["-", "x", "o"], ["x", "o", "x"]],
+        [["o", "x", "-"], ["o", "x", "-"], ["x", "o", "-"]],
+    ],
+)
+def test_tic_tac_toe_checker_unfinished(board):
     assert tic_tac_toe_checker(board) == "unfinished!"

@@ -5,7 +5,7 @@ example_tree = {
     (1, 2): {
         "simple_key": [False, "list", 800, {"RED", "set"}],
     },
-    "RED": {
+    1: {
         "abc": ("BLUE",),
         ("j", "h", "l"): "RED",
         5: {
@@ -13,9 +13,9 @@ example_tree = {
             ("tuple", "as", "key"): [{"strings", "in", "set"}, {True: "RED"}],
         },
     },
-    ("RED",): "RED",
+    2: ([{"RED"}],),
 }
 
 
 def test_find_occurrences():
-    assert find_occurrences(example_tree, "RED") == 8
+    assert find_occurrences(example_tree, "RED") == 6
