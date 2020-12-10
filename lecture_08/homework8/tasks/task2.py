@@ -78,7 +78,7 @@ class TableData:
         )
         return self.cursor.fetchone()
 
-    def __contains__(self, item: Any) -> bool:
+    def __contains__(self, name: Any) -> bool:
         """Makes possible membership testing using search through names column.
 
         Args:
@@ -90,7 +90,7 @@ class TableData:
         """
 
         self.cursor.execute(
-            "SELECT * FROM {} WHERE name=?".format(self.table_name), (item,)
+            "SELECT * FROM {} WHERE name=?".format(self.table_name), (name,)
         )
         return self.cursor.fetchone()
 
