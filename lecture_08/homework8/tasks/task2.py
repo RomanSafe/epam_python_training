@@ -1,6 +1,6 @@
 import sqlite3
-from collections.abc import Iterator
-from typing import Any
+from collections.abc import Callable, Iterator
+from typing import Any, Optional
 
 
 class TableData:
@@ -28,15 +28,38 @@ class TableData:
         -all above mentioned calls reflect most recent data.
 
         Attributes:
-            table_name: the name of table in the database to operate;
-            conn: connection object;
-            cursor: the database cursor object.
-
-        Raises:
-            StopIteration if there are no further items for iteration (iterator is
-            exhausted).
+            database_name: the name of database to connect;
+            table_name: the name of table in the database to operate.
 
     """
+
+    def connect_to_database(method: Callable) -> Callable:  # type: ignore
+        """Wrapper to reflect most recent data from the database.
+
+        It supply given method with a new connection and cursor object.
+
+        Args:
+            method: method to decorate.
+
+        Returns:
+            Decorated method.
+
+        """
+
+        def wrapper(self, *args, **kwargs) -> Any:
+            """Connects to the database, creates a cursor object and keeps connection
+                opened till the decorated method will complete it's work.
+
+            Returns:
+                results of wrapped method's execution.
+
+            """
+
+            with sqlite3.connect(self.database_name) as conn:
+                cursor = conn.cursor()
+            return method(self, cursor, *args, **kwargs)
+
+        return wrapper
 
     def __init__(self, database_name: str, table_name: str) -> None:
         """Initialises class instance.
@@ -47,36 +70,47 @@ class TableData:
 
         """
 
+        self.database_name = database_name
         self.table_name = table_name
-        self.conn = sqlite3.connect(database_name)
-        self.cursor = self.conn.cursor()
 
-    def __len__(self) -> int:
+    @connect_to_database
+    def __len__(self, cursor: sqlite3.Cursor) -> int:
         """Counts current amount of rows in the initialised table of the database.
+
+        Args:
+            cursor: Cursor instance.
 
         Returns:
             amount of rows in the table.
 
         """
 
-        self.cursor.execute("SELECT count(*) FROM {}".format(self.table_name))
-        return self.cursor.fetchone()[0]
+        cursor.execute("SELECT count(*) FROM {}".format(self.table_name))
+        return cursor.fetchone()[0]
 
-    def __getitem__(self, value: Any) -> tuple:
+    @connect_to_database
+    def __getitem__(self, cursor: sqlite3.Cursor, value: Any) -> Optional[tuple]:
         """Makes table rows accessible through square brackets notation.
 
         Args:
+            cursor: Cursor instance;
             value: value of the row we are looking for.
 
         Returns:
             single data row.
 
+        Raises:
+            KeyError: if value not in the database.
+
         """
 
-        self.cursor.execute(
+        cursor.execute(
             "SELECT * FROM {} WHERE name=?".format(self.table_name), (value,)
         )
-        return self.cursor.fetchone()
+        row = cursor.fetchone()
+        if row:
+            return row
+        raise KeyError(f"{value} not in the database")
 
     def __contains__(self, name: Any) -> bool:
         """Makes possible membership testing using search through names column.
@@ -89,42 +123,21 @@ class TableData:
 
         """
 
-        self.cursor.execute(
-            "SELECT * FROM {} WHERE name=?".format(self.table_name), (name,)
-        )
-        return self.cursor.fetchone()
+        try:
+            return bool(self[name])
+        except KeyError:
+            return False
 
-    def __iter__(self) -> Iterator:
+    @connect_to_database
+    def __iter__(self, cursor: sqlite3.Cursor) -> Iterator:
         """Creates an iterator object.
+
+        Args:
+            cursor: Cursor instance.
 
         Returns:
             the iterator object itself.
 
         """
 
-        self.cursor.execute("SELECT name FROM {}".format(self.table_name))
-        return self
-
-    def __next__(self) -> str:
-        """Fetch and return the next row after executing a SELECT statement in __iter__
-            method.
-
-        Raises:
-            StopIteration: if there are no further items.
-
-        Returns:
-            content of received row.
-
-        """
-
-        while row := self.cursor.fetchone():
-            return row[0]
-        raise StopIteration
-
-    def close(self) -> None:
-        """Closes current connection. This method must be called after termination of
-        all operations with database.
-
-        """
-
-        self.conn.close()
+        yield from cursor.execute("SELECT name FROM {}".format(self.table_name))
