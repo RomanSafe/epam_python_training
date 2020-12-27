@@ -4,19 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from lecture_10.homework10.task.task import (
-    add_info_to_db,
-    collect_year_growth,
-    create_report,
-    fetch_markup,
-    get_comp_pages_html,
-    get_companies_info,
-    get_companies_links,
-    get_exchange_rate,
-    get_main_pages_html,
-    main,
-    write_json,
-)
+from lecture_10.homework10.task.task import main
 
 
 @pytest.mark.asyncio

@@ -5,7 +5,7 @@ import re
 import sqlite3
 import time
 import urllib.parse
-from collections.abc import AsyncGenerator, Mapping
+from collections.abc import AsyncGenerator, Iterable, Mapping
 from itertools import chain, islice
 from multiprocessing import Pool
 from typing import Any, List, Tuple
@@ -81,7 +81,7 @@ def get_companies_links(markup: str) -> List[str]:
 
 
 async def get_comp_pages_html(
-    session: aiohttp.ClientSession, companies_links: List[str]
+    session: aiohttp.ClientSession, companies_links: Iterable[str]
 ) -> AsyncGenerator[asyncio.Future[str], None]:
     """Gets html from pages of companies.
 
@@ -134,12 +134,12 @@ def get_companies_info(markup: str) -> tuple:
     if script_tag:
         script_text = str(script_tag.string)
         high52weeks = float(
-            re.search(r"high52weeks: (\d+[.]?\d*),", script_text)
+            re.search(r"high52weeks: (\d+[.]?\d*),", script_text)  # type: ignore
             .group(1)
             .replace(",", "")
         )
         low52weeks = float(
-            re.search(r"low52weeks: (\d+[.]?\d*),", script_text)
+            re.search(r"low52weeks: (\d+[.]?\d*),", script_text)  # type: ignore
             .group(1)
             .replace(",", "")
         )
@@ -258,10 +258,10 @@ async def create_report(report_name: str, main_property: str, statement: str) ->
         async for row in get_query_results(statement)
     ]
     with Pool(processes=1) as pool:
-        pool.apply_async(write_json, report_name, report_base)
+        pool.apply_async(write_json, report_name, report_base)  # type: ignore
 
 
-def write_json(report_name: str, report_base: Mapping[str, Any]) -> None:
+def write_json(report_name: str, report_base: List[Mapping[str, Any]]) -> None:
     """Converts report_base to json and writes to a file.
 
     Args:
@@ -291,8 +291,9 @@ async def main() -> None:
         p2 = time.time()
         print(f"collection of main_pages_html lasted: {p2 - start_time}")
         with Pool() as pool:
-            companies_links = pool.map_async(get_companies_links, main_pages_html).get()
-            companies_links = set(chain(*companies_links))
+            companies_links = set(
+                chain(*pool.map_async(get_companies_links, main_pages_html).get())
+            )
         p3 = time.time()
         print(f"collection of companies_links lasted: {p3 - p2}")
         comp_pages_html = [
@@ -303,8 +304,9 @@ async def main() -> None:
         with Pool() as pool:
             companies_info = pool.map_async(get_companies_info, comp_pages_html).get()
             exchange_rate = (pool.apply_async(get_exchange_rate).get(),)
-            year_growth = pool.map_async(collect_year_growth, main_pages_html).get()
-            year_growth = chain(*year_growth)
+            year_growth = chain(
+                *pool.map_async(collect_year_growth, main_pages_html).get()
+            )
         p5 = time.time()
         print("parsing of comp_pages_html,")
         print("receiving of usd price,")
