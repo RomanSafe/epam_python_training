@@ -12,7 +12,7 @@ def test_simplified_enum_positive():
 
 def test_simplified_enum_negative():
     class SizesEnum(metaclass=SimplifiedEnum):
-        __keys = ("S")
+        __keys = "S"
 
     with pytest.raises(AttributeError) as exc_info:
         SizesEnum.XXL
