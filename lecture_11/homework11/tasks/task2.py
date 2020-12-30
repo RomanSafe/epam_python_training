@@ -99,7 +99,7 @@ class Discount(ABC):
     discount class.
 
     Raises:
-        NotImplementedError: if any of successors don't have required class attributes.
+        NotImplementedError: if any of successors don't have required class attribute.
 
     Returns:
         final price.
@@ -109,22 +109,19 @@ class Discount(ABC):
     discount = 0.0
 
     def __init_subclass__(cls):
-        """Checks if subclasses have required attributes.
+        """Checks if subclasses have required attribute.
 
         Raises:
             NotImplementedError: if any of successors don't have required class
-            attributes.
+            attribute.
 
         """
 
-        required_class_attributes = [
-            "discount",
-        ]
-        for var in required_class_attributes:
-            if not hasattr(cls, var):
-                raise NotImplementedError(
-                    f"Class {cls} lacks required `{var}` class attribute"
-                )
+        required_attribute = "discount"
+        if not hasattr(cls, required_attribute):
+            raise NotImplementedError(
+                f"Class {cls} lacks required `{required_attribute}` class attribute"
+            )
 
     @classmethod
     def count_final_price(cls, order: Order, price: float = None) -> float:
